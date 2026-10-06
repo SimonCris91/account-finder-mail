@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  worker:
+    name: Worker bundle checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - name: Check generated worker syntax
+        run: |
+          node --check dist/server/index.js
+          node --check dist/server/html.js
+          node --check dist/server/hero-image.js
+      - name: Verify deploy bundle
+        run: |
+          test -f dist/server/index.js
+          test -f dist/server/html.js
+          test -f dist/server/hero-image.js
